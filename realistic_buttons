@@ -1,0 +1,1153 @@
+button_card_templates:
+  realistic_button:
+    variables:
+      accent: var(--accent-color)
+      picture: null
+      subtitle: ''
+      badge: ''
+      show_state_dot: false
+      icon_name: null
+      icon_on: null
+      icon_off: null
+      glow_for_non_lights: true
+      glow_non_light_color: var(--accent-color)
+      glow_non_light_opacity: 0.35
+      glow_active_states: on,open,opening,closing,playing,heating,cooling
+      glow_origin_x: 50
+      glow_origin_y: 88
+      glow_radius_x: 120
+      glow_radius_y: 90
+      glow_falloff: 65
+      twinkly_members: []
+      twinkly_effect_map:
+        carnival: '#ff7a3d'
+        rainbowvortex: '#a855f7'
+        rainbowpetri: '#ec4899'
+        plasma: '#f472b6'
+        3d flag: '#60a5fa'
+        us bounce: '#ef4444'
+        usa flag: '#ef4444'
+        vertical flag: '#ef4444'
+        unicorn sun: '#f9a8d4'
+        glow: '#ffd166'
+        bright twinkle: '#cfe8ff'
+      twinkly_multi_mode: blend
+      twinkly_effect_palettes:
+        carnival:
+          - '#ff4d4d'
+          - '#ffd166'
+          - '#32d17d'
+          - '#6aa8ff'
+          - '#a855f7'
+        rainbowvortex:
+          - '#ff4d4d'
+          - '#ff9900'
+          - '#ffee55'
+          - '#32d17d'
+          - '#6aa8ff'
+          - '#7c3aed'
+          - '#ec4899'
+        rainbowpetri:
+          - '#f472b6'
+          - '#ec4899'
+          - '#a855f7'
+          - '#6aa8ff'
+        plasma:
+          - '#ff79c6'
+          - '#f472b6'
+          - '#e879f9'
+        3d flag:
+          - '#ef4444'
+          - '#ffffff'
+          - '#3b82f6'
+        us bounce:
+          - '#ef4444'
+          - '#ffffff'
+          - '#3b82f6'
+        usa flag:
+          - '#ef4444'
+          - '#ffffff'
+          - '#3b82f6'
+        vertical flag:
+          - '#ef4444'
+          - '#ffffff'
+          - '#3b82f6'
+        unicorn sun:
+          - '#f9a8d4'
+          - '#ffd7a0'
+          - '#cfe8ff'
+        glow:
+          - '#ffd166'
+          - '#fff2cc'
+        bright twinkle:
+          - '#cfe8ff'
+          - '#ffffff'
+      icon_color_matches_light: true
+    show_icon: true
+    show_name: true
+    show_label: ''
+    size: 28px
+    aspect_ratio: 1/1
+    tap_action:
+      action: toggle
+      haptic: light
+    hold_action:
+      action: more-info
+      haptic: medium
+    double_tap_action:
+      action: more-info
+    styles:
+      grid:
+        - grid-template-areas: '"i badge" "n n" "s s" "l l"'
+        - grid-template-columns: 1fr auto
+        - grid-template-rows: auto auto auto 1fr
+      card:
+        - position: relative
+        - padding: 10px
+        - border-radius: 22px
+        - border: 1px solid rgba(255,255,255,0.06)
+        - background: var(--ha-card-background, var(--card-background-color))
+        - box-shadow: |
+            [[[
+              const active = entity && ['on','open','playing'].includes(entity.state);
+              return active
+                ? '12px 12px 24px rgba(0,0,0,0.35), -12px -12px 24px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -8px 16px rgba(255,255,255,0.06)'
+                : '8px 8px 16px rgba(0,0,0,0.28), -8px -8px 16px rgba(255,255,255,0.06), inset 0 -6px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.35)';
+            ]]]
+        - transition: box-shadow 0.25s ease, transform 0.08s ease
+        - overflow: hidden
+      icon:
+        - grid-area: i
+        - position: relative
+        - z-index: 3
+        - display: block
+        - opacity: 1
+        - color: |
+            [[[
+              var active = entity && (entity.state === 'on' || entity.state === 'open' || entity.state === 'playing');
+              if (!active) return 'var(--secondary-text-color)';
+
+              var e   = entity || {};
+              var a0  = (e.attributes || {});
+              var lst = [];
+              if (Array.isArray(variables.twinkly_members) && variables.twinkly_members.length) {
+                lst = variables.twinkly_members;
+              } else if (Array.isArray(a0.entity_id)) {
+                lst = a0.entity_id;
+              } else if (e.entity_id) {
+                lst = [e.entity_id];
+              }
+
+              var attrs = null;
+              for (var i=0; i<lst.length; i++) {
+                var st = states[lst[i]];
+                if (st && st.state === 'on') { attrs = st.attributes || {}; break; }
+              }
+              if (!attrs) attrs = a0;
+
+              if (variables.icon_color_matches_light === false) return 'inherit';
+
+              var eff = (attrs.effect || attrs.movie || attrs.playlist);
+              if (eff) {
+                var raw = String(eff).toLowerCase().replace(/^\d+\s+/, ''); // strip "14 "
+                var map = variables.twinkly_effect_map || {};
+                for (var k in map) { if (raw.indexOf(k) !== -1) return map[k]; }
+              }
+
+              if (Array.isArray(attrs.rgb_color)) {
+                var r=attrs.rgb_color[0], g=attrs.rgb_color[1], b=attrs.rgb_color[2];
+                return 'rgb(' + r + ',' + g + ',' + b + ')';
+              }
+              if (Array.isArray(attrs.hs_color)) {
+                var h=Math.round(attrs.hs_color[0]||0), s=Math.round(attrs.hs_color[1]||0);
+                var l=55;
+                if (attrs.brightness != null) l = Math.max(35, Math.min(65, 30 + (attrs.brightness/255)*35));
+                return 'hsl(' + h + ',' + s + '%,' + Math.round(l) + '%)';
+              }
+              if (attrs.color_temp_kelvin != null) {
+                var k = Math.max(2000, Math.min(6500, attrs.color_temp_kelvin));
+                var t = (k - 2000) / (6500 - 2000);
+                var hue = Math.round(25 + t * (210 - 25));
+                return 'hsl(' + hue + ',100%,56%)';
+              }
+
+              return variables.accent || 'var(--accent-color)';
+            ]]]
+        - filter: |
+            [[[
+              return (entity && (entity.state === 'on' || entity.state === 'open' || entity.state === 'playing'))
+                ? 'drop-shadow(0 6px 10px rgba(0,0,0,0.35))'
+                : 'none';
+            ]]]
+      name:
+        - margin-top: 8px
+        - font-weight: 400
+        - justify-self: center
+        - color: var(--primary-text-color)
+        - z-index: 2
+      label:
+        - justify-self: center
+        - margin-top: 2px
+        - opacity: 0.75
+        - font-size: 0.8em
+        - color: var(--secondary-text-color)
+        - z-index: 2
+      state:
+        - justify-self: center
+        - margin-top: 2px
+        - font-size: 0.82em
+        - opacity: 0.85
+        - color: var(--secondary-text-color)
+        - z-index: 2
+      lock:
+        - z-index: 5
+        - pointer-events: auto
+        - opacity: 0.25
+      custom_fields:
+        gloss:
+          - position: absolute
+          - inset: 0
+          - border-radius: inherit
+          - pointer-events: none
+          - mix-blend-mode: screen
+          - z-index: 0
+          - display: |
+              [[[
+                return variables.show_gloss ? 'block' : 'none';
+              ]]]
+          - background: |
+              [[[
+                const t  = variables.gloss_top_opacity ?? 0.18;
+                const m  = variables.gloss_mid_opacity ?? 0.06;
+                const ms = variables.gloss_mid_stop ?? 25;
+                const bs = variables.gloss_break_stop ?? 46;
+                return `linear-gradient(180deg,
+                  rgba(255,255,255,${t}) 0%,
+                  rgba(255,255,255,${m}) ${ms}%,
+                  transparent ${bs}%)`;
+              ]]]
+        under_glow:
+          - position: absolute
+          - inset: 0
+          - border-radius: inherit
+          - pointer-events: none
+          - background: |
+              [[[
+                var e   = entity || {};
+                var a0  = (e.attributes || {});
+                var lst = [];
+                if (Array.isArray(variables.twinkly_members) && variables.twinkly_members.length) {
+                  lst = variables.twinkly_members;
+                } else if (Array.isArray(a0.entity_id)) {
+                  lst = a0.entity_id;
+                } else if (e.entity_id) {
+                  lst = [e.entity_id];
+                }
+                var attrs = null;
+                for (var i=0; i<lst.length; i++) {
+                  var st = states[lst[i]];
+                  if (st && st.state === 'on') { attrs = st.attributes || {}; break; }
+                }
+                if (!attrs) attrs = a0;
+
+                function make(col){ return 'radial-gradient(120% 85% at 50% 88%, ' + col + ', transparent 80%)'; }
+
+                var eff = (attrs.effect || attrs.movie || attrs.playlist);
+                if (eff) {
+                  var raw = String(eff).toLowerCase().replace(/^\d+\s+/, '');
+                  var map = variables.twinkly_effect_map || {};
+                  for (var key in map) { if (raw.indexOf(key) !== -1) return make(String(map[key]) + '33'); }
+                }
+
+                if (Array.isArray(attrs.rgb_color)) {
+                  var r=attrs.rgb_color[0], g=attrs.rgb_color[1], b=attrs.rgb_color[2];
+                  return make('rgba(' + r + ',' + g + ',' + b + ',0.18)');
+                }
+                if (Array.isArray(attrs.hs_color))  {
+                  var h=Math.round(attrs.hs_color[0]||0), s=Math.round(attrs.hs_color[1]||0);
+                  return make('hsla(' + h + ',' + s + '%,55%,0.18)');
+                }
+                if (attrs.color_temp_kelvin != null) {
+                  var k = Math.max(2000, Math.min(6500, attrs.color_temp_kelvin));
+                  var t = (k - 2000) / (6500 - 2000);
+                  var hue = Math.round(25 + t * (210 - 25));
+                  return make('hsla(' + hue + ',100%,56%,0.18)');
+                }
+
+                return make(String(variables.accent || 'var(--accent-color)') + '33');
+              ]]]
+          - opacity: |
+              [[[
+                return (entity && ['on','open','playing'].includes(entity.state)) ? 1 : 0;
+              ]]]
+          - transition: opacity 0.25s ease
+          - z-index: 0
+        glow:
+          - position: absolute
+          - inset: 0
+          - border-radius: inherit
+          - pointer-events: none
+          - z-index: 0
+          - background: |
+              [[[
+                // pick a source: first ON from twinkly_members → group members → self
+                var e   = entity || {};
+                var a0  = (e.attributes || {});
+                var lst = [];
+                if (Array.isArray(variables.twinkly_members) && variables.twinkly_members.length) {
+                  lst = variables.twinkly_members;
+                } else if (Array.isArray(a0.entity_id)) {
+                  lst = a0.entity_id;
+                } else if (e.entity_id) {
+                  lst = [e.entity_id];
+                }
+                var attrs = null;
+                for (var i=0;i<lst.length;i++){
+                  var st = states[lst[i]];
+                  if (st && st.state === 'on') { attrs = st.attributes || {}; break; }
+                }
+                if (!attrs) attrs = a0;
+
+                var ox = Number(variables.glow_origin_x || 50);
+                var oy = Number(variables.glow_origin_y || 88);
+                var rx = Number(variables.glow_radius_x || 120);
+                var ry = Number(variables.glow_radius_y || 90);
+                var fall = Number(variables.glow_falloff || 65);
+
+                function make(stops){
+                  return 'radial-gradient(' + rx + '% ' + ry + '% at ' + ox + '% ' + oy + '%, ' + stops + ', transparent ' + fall + '%)';
+                }
+
+                // Prefer multi-color palette when an effect is present and mode=blend
+                var eff = (attrs.effect || attrs.movie || attrs.playlist);
+                if (eff && String(variables.twinkly_multi_mode||'').toLowerCase() === 'blend') {
+                  var raw = String(eff).toLowerCase().replace(/^\d+\s+/, '');
+                  var pals = variables.twinkly_effect_palettes || {};
+                  // find palette by substring match
+                  var pal = null;
+                  for (var key in pals) { if (raw.indexOf(key) !== -1) { pal = pals[key]; break; } }
+                  if (Array.isArray(pal) && pal.length){
+                    // build evenly spaced color stops, with soft alpha
+                    var n = pal.length;
+                    var parts = [];
+                    for (var j=0;j<n;j++){
+                      var c = String(pal[j]);
+                      // add soft alpha if hex (#rrggbb -> #rrggbbaa)
+                      if (c.charAt(0)==='#' && c.length===7) c = c + '88';
+                      var pct = 12 + Math.round(j * (48/(Math.max(1,n-1)))); // ~12%..60%
+                      parts.push(c + ' ' + pct + '%');
+                    }
+                    return make(parts.join(', '));
+                  }
+                }
+
+                // Next: true color (solid mode)
+                if (Array.isArray(attrs.rgb_color)) {
+                  var r=attrs.rgb_color[0], g=attrs.rgb_color[1], b=attrs.rgb_color[2];
+                  return make('rgba(' + r + ',' + g + ',' + b + ',0.35)');
+                }
+                if (Array.isArray(attrs.hs_color))  {
+                  var h=Math.round(attrs.hs_color[0]||0), s=Math.round(attrs.hs_color[1]||0);
+                  return make('hsla(' + h + ',' + s + '%,55%,0.35)');
+                }
+                if (attrs.color_temp_kelvin != null) {
+                  var k = Math.max(2000, Math.min(6500, attrs.color_temp_kelvin));
+                  var t = (k - 2000) / (6500 - 2000);
+                  var hue = Math.round(25 + t * (210 - 25));
+                  return make('hsla(' + hue + ',100%,56%,0.35)');
+                }
+
+                // Finally: single-color map (your existing twinkly_effect_map) or accent
+                if (eff){
+                  var raw2 = String(eff).toLowerCase().replace(/^\d+\s+/, '');
+                  var map = variables.twinkly_effect_map || {};
+                  for (var m in map){ if (raw2.indexOf(m)!==-1) return make(String(map[m]) + '55'); }
+                }
+
+                var id0 = String(e.entity_id||'').toLowerCase();
+                var isLightish = id0.indexOf('light.') === 0 || (Array.isArray(a0.entity_id) && a0.entity_id.join(',').indexOf('light.')!==-1);
+                if (!isLightish && variables.glow_for_non_lights) {
+                  return make(String(variables.glow_non_light_color || 'var(--accent-color)'));
+                }
+                return make(String(variables.accent || 'var(--accent-color)'));
+              ]]]
+          - opacity: |
+              [[[
+                var s = String(entity && entity.state || '').toLowerCase();
+                var list = String(variables.glow_active_states || '').split(',').map(function(x){return x.trim().toLowerCase();});
+                if (list.indexOf(s) === -1) return 0;
+                var a = (entity && entity.attributes) ? entity.attributes : {};
+                if (a.rgb_color || a.hs_color || a.color_temp_kelvin != null) return 1;
+                return Number(variables.glow_non_light_opacity || 0.35);
+              ]]]
+          - transition: opacity 0.25s ease
+          - pointer-events: none
+          - z-index: 0
+        badge:
+          - grid-area: badge
+          - align-self: start
+          - justify-self: end
+          - background: |
+              [[[
+                return variables.badge ? 'var(--accent-color)' : 'transparent';
+              ]]]
+          - color: var(--text-primary-color, white)
+          - border-radius: 999px
+          - min-width: 22px
+          - height: 22px
+          - line-height: 22px
+          - text-align: center
+          - font-size: 0.75em
+          - box-shadow: 0 2px 6px rgba(0,0,0,0.35)
+          - padding: 0 6px
+          - display: |
+              [[[
+                return variables.badge ? 'block' : 'none';
+              ]]]
+        indicator:
+          - position: absolute
+          - right: 10px
+          - bottom: 10px
+          - width: 4px
+          - height: 4px
+          - border-radius: 50%
+          - opacity: 0
+          - box-shadow: 0 0 0 2px var(--ha-card-background, var(--card-background-color))
+          - background: |
+              [[[
+                if (variables.show_state_dot) {
+                  if (entity && (['on','open','playing'].includes(entity.state))) return '#2ecc71';
+                  return '#ff4d4d';
+                }
+                return 'transparent';
+              ]]]
+    custom_fields:
+      gloss: ''
+      glow: ''
+      under_glow: ''
+      badge: |
+        [[[
+          return variables.badge ? `<span>${variables.badge}</span>` : '';
+        ]]]
+      indicator: |
+        [[[
+          return variables.show_state_dot ? ' ' : '';
+        ]]]
+    state:
+      - value: 'on'
+        styles:
+          card:
+            - background: |
+                [[[
+                  return `linear-gradient(145deg, ${variables.accent}1A, var(--ha-card-background, var(--card-background-color)))`;
+                ]]]
+            - border: |
+                [[[
+                  return `1px solid ${variables.accent}66`;
+                ]]]
+      - value: open
+        styles:
+          card:
+            - background: |
+                [[[
+                  return `linear-gradient(145deg, ${variables.accent}1A, var(--ha-card-background, var(--card-background-color)))`;
+                ]]]
+      - value: playing
+        styles:
+          icon:
+            - color: '[[[ return variables.accent ]]]'
+    label: |
+      [[[
+        if (variables.subtitle) return variables.subtitle;
+        if (!entity) return '';
+        const s = entity.state || '';
+        if (entity.attributes && entity.attributes.brightness != null) {
+          return `${Math.round(entity.attributes.brightness/2.54)}%`;
+        }
+        if (s === 'on') return 'On';
+        if (s === 'off') return 'Off';
+        return s.charAt(0).toUpperCase()+s.slice(1);
+      ]]]
+    show_entity_picture: |
+      [[[
+        return !!variables.picture;
+      ]]]
+    entity_picture: |
+      [[[
+        return variables.picture || null;
+      ]]]
+    icon: |
+      [[[
+        if (variables.icon_name) return variables.icon_name;
+        if (variables.icon_on || variables.icon_off) {
+          const s = entity?.state;
+          const active = ['on','open','playing','heating','cooling'].includes(s);
+          if (active && variables.icon_on) return variables.icon_on;
+          const inactive = ['off','closed','idle','standby','unavailable'].includes(s);
+          if (inactive && variables.icon_off) return variables.icon_off;
+        }
+        return entity?.attributes?.icon || 'mdi:lightbulb';
+      ]]]
+  realistic_button_v2:
+    variables:
+      accent: var(--accent-color)
+      subtitle: ''
+      badge: ''
+      show_state_dot: false
+      width: null
+      height: null
+      min_width: null
+      min_height: null
+      max_width: null
+      max_height: null
+      icon_size: 30px
+      icon_name: null
+      icon_on: null
+      icon_off: null
+    color_type: card
+    show_icon: true
+    show_name: true
+    show_label: true
+    aspect_ratio: 1/1
+    size: '[[[ return variables.icon_size || "30px"; ]]]'
+    tap_action:
+      action: toggle
+      haptic: light
+    hold_action:
+      action: more-info
+      haptic: medium
+    double_tap_action:
+      action: more-info
+    styles:
+      grid:
+        - grid-template-areas: '"i badge" "n n" "s s" "l l"'
+        - grid-template-columns: 1fr auto
+        - grid-template-rows: auto auto auto 1fr
+      card:
+        - position: relative
+        - padding: 10px
+        - border-radius: 22px
+        - border: 1px solid rgba(255,255,255,0.06)
+        - background: var(--ha-card-background, var(--card-background-color))
+        - box-shadow: |
+            [[[
+              const active = entity && ['on','open','playing'].includes(entity.state);
+              return active
+                ? '12px 12px 24px rgba(0,0,0,0.35), -12px -12px 24px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -8px 16px rgba(255,255,255,0.06)'
+                : '8px 8px 16px rgba(0,0,0,0.28), -8px -8px 16px rgba(255,255,255,0.06), inset 0 -6px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.35)';
+            ]]]
+        - transition: box-shadow 0.25s ease, transform 0.08s ease
+        - width: '[[[ return variables.width      || "100px" ]]]'
+        - height: '[[[ return variables.height || "auto" ]]]'
+        - min-width: '[[[ return variables.min_width  || "" ]]]'
+        - min-height: '[[[ return variables.min_height  || "" ]]]'
+        - max-width: '[[[ return variables.max_width  || "" ]]]'
+        - max-height: '[[[ return variables.max_height || "" ]]]'
+      icon:
+        - grid-area: i
+        - position: relative
+        - z-index: 3
+        - display: block
+        - opacity: 1
+        - color: |
+            [[[
+              const active = entity && ['on','open','playing'].includes(entity.state);
+              if (!active) return 'var(--secondary-text-color)';
+
+              // pull color from the light (same logic as glow)
+              const a0 = entity?.attributes || {};
+              let attrs = a0;
+
+              // if it's a light group and has no own color, check its members
+              if (variables.icon_color_matches_light && variables.light_color_from_members) {
+                const members = a0?.entity_id;
+                if ((!a0.rgb_color && !a0.hs_color && a0.color_temp_kelvin == null) && Array.isArray(members)) {
+                  for (const m of members) {
+                    if (!m?.startsWith?.('light.')) continue;
+                    const st = states[m];
+                    const aa = st?.attributes || {};
+                    if (st?.state === 'on' && (aa.rgb_color || aa.hs_color || aa.color_temp_kelvin != null)) {
+                      attrs = aa; break;
+                    }
+                  }
+                }
+              }
+
+              // exact same color basis we use for the glow
+              if (Array.isArray(attrs.rgb_color)) {
+                const [r,g,b] = attrs.rgb_color; return `rgb(${r}, ${g}, ${b})`;
+              }
+              if (Array.isArray(attrs.hs_color)) {
+                const [h,s] = attrs.hs_color;
+                // brightness-informed lightness for visual parity with glow
+                let l = 55;
+                if (attrs.brightness != null) l = Math.max(35, Math.min(65, 30 + (attrs.brightness/255)*35));
+                return `hsl(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%)`;
+              }
+              if (attrs.color_temp_kelvin != null) {
+                const k = Math.max(2000, Math.min(6500, attrs.color_temp_kelvin));
+                const t = (k - 2000) / (6500 - 2000);          // 0 = warm, 1 = cool
+                const hue = Math.round(25 + t * (210 - 25));   // warm→cool mapping
+                return `hsl(${hue}, 100%, 56%)`;
+              }
+
+              return variables.accent || 'var(--accent-color)'; // fallback
+            ]]]
+        - filter: |
+            [[[
+              return (entity && ['on','open','playing'].includes(entity.state))
+                ? 'drop-shadow(0 6px 10px rgba(0,0,0,0.35))'
+                : 'none';
+            ]]]
+      name:
+        - margin-top: 8px
+        - font-weight: 400
+        - justify-self: start
+        - color: var(--primary-text-color)
+        - z-index: 2
+      state:
+        - justify-self: start
+        - margin-top: 2px
+        - font-size: 0.82em
+        - opacity: 0.85
+        - color: var(--secondary-text-color)
+        - z-index: 2
+      label:
+        - justify-self: start
+        - margin-top: 2px
+        - opacity: 0.78
+        - font-size: 0.82em
+        - color: var(--secondary-text-color)
+        - z-index: 2
+      custom_fields:
+        gloss:
+          - position: absolute
+          - inset: 0
+          - border-radius: 22px
+          - background: >-
+              linear-gradient(180deg, rgba(255,255,255,0.28) 0%,
+              rgba(255,255,255,0.08) 45%, rgba(0,0,0,0.0) 46%)
+          - mix-blend-mode: screen
+          - pointer-events: none
+          - z-index: 0
+        under_glow:
+          - position: absolute
+          - inset: 0
+          - border-radius: 22px
+          - pointer-events: none
+          - background: |
+              [[[
+                // reuse the dynamic color logic (rgb/hs/ct → translucent)
+                const a = entity?.attributes || {};
+                let color = variables.accent;
+                if (Array.isArray(a.rgb_color)) {
+                  const [r,g,b] = a.rgb_color; color = `rgba(${r}, ${g}, ${b}, 0.18)`;
+                } else if (Array.isArray(a.hs_color)) {
+                  const [h,s] = a.hs_color;    color = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.18)`;
+                } else if (a.color_temp_kelvin != null) {
+                  const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
+                  const t = (k - 2000) / (6500 - 2000);
+                  const hue = Math.round(25 + t * (210 - 25));
+                  color = `hsla(${hue}, 100%, 56%, 0.18)`;
+                } else {
+                  color = `${variables.accent}33`;
+                }
+                // bottom-anchored soft glow
+                return `radial-gradient(120% 85% at 50% 88%, ${color}, transparent 80%)`;
+              ]]]
+          - opacity: |
+              [[[
+                return (entity && ['on','open','playing'].includes(entity.state)) ? 1 : 0;
+              ]]]
+          - transition: opacity 0.25s ease
+          - z-index: 0
+        glow:
+          - position: absolute
+          - top: 6px
+          - left: 6px
+          - right: 6px
+          - height: 56%
+          - border-radius: 9999px
+          - background: |
+              [[[
+                // same dynamic color, but translucent radial glow
+                const a = entity?.attributes || {};
+                let color = variables.accent;
+
+                if (Array.isArray(a.rgb_color)) {
+                  const [r,g,b] = a.rgb_color; color = `rgba(${r}, ${g}, ${b}, 0.30)`;
+                } else if (Array.isArray(a.hs_color)) {
+                  const [h,s] = a.hs_color; color = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.35)`;
+                } else if (a.color_temp_kelvin != null) {
+                  const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
+                  const t = (k - 2000) / (6500 - 2000);
+                  const hue = Math.round(25 + t * (210 - 25));
+                  color = `hsla(${hue}, 100%, 56%, 0.35)`;
+                } else {
+                  color = `${variables.accent}55`;
+                }
+                return `radial-gradient(circle at 30% 25%, ${color}, transparent 55%)`;
+              ]]]
+          - opacity: |
+              [[[
+                return (entity && ['on','open','playing'].includes(entity.state)) ? 1 : 0;
+              ]]]
+          - transition: opacity 0.25s ease
+          - pointer-events: none
+          - z-index: 0
+        badge:
+          - grid-area: badge
+          - align-self: start
+          - justify-self: end
+          - background: |
+              [[[
+                return variables.badge ? 'var(--accent-color)' : 'transparent';
+              ]]]
+          - color: var(--text-primary-color, white)
+          - border-radius: 999px
+          - min-width: 22px
+          - height: 22px
+          - line-height: 22px
+          - text-align: center
+          - font-size: 0.75em
+          - box-shadow: 0 2px 6px rgba(0,0,0,0.35)
+          - padding: 0 6px
+          - display: |
+              [[[
+                return variables.badge ? 'block' : 'none';
+              ]]]
+        indicator:
+          - position: absolute
+          - right: 10px
+          - bottom: 10px
+          - width: 4px
+          - height: 4px
+          - border-radius: 50%
+          - box-shadow: 0 0 0 2px var(--ha-card-background, var(--card-background-color))
+          - background: |
+              [[[
+                if (!variables.show_state_dot) return 'transparent';
+                if (entity && ['on','open','playing'].includes(entity.state)) return '#2ecc71';
+                return '#ff4d4d';
+              ]]]
+    custom_fields:
+      gloss: ''
+      glow: ''
+      under_glow: ''
+      badge: |
+        [[[
+          return variables.badge ? `<span>${variables.badge}</span>` : '';
+        ]]]
+      indicator: |
+        [[[
+          return variables.show_state_dot ? ' ' : '';
+        ]]]
+    state:
+      - value: 'on'
+        styles:
+          card:
+            - background: |
+                [[[
+                  // Subtle color-tinted backdrop when on
+                  const a = entity?.attributes || {};
+                  let tint = variables.accent;
+
+                  if (Array.isArray(a.rgb_color)) {
+                    const [r,g,b] = a.rgb_color; tint = `rgba(${r}, ${g}, ${b}, 0.12)`;
+                  } else if (Array.isArray(a.hs_color)) {
+                    const [h,s] = a.hs_color; tint = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.12)`;
+                  } else if (a.color_temp_kelvin != null) {
+                    const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
+                    const t = (k - 2000) / (6500 - 2000);
+                    const hue = Math.round(25 + t * (210 - 25));
+                    tint = `hsla(${hue}, 100%, 56%, 0.12)`;
+                  } else {
+                    tint = `${variables.accent}1F`;
+                  }
+
+                  return `linear-gradient(145deg, ${tint}, var(--ha-card-background, var(--card-background-color)))`;
+                ]]]
+            - border: |
+                [[[
+                  // Slight colored border when on
+                  const a = entity?.attributes || {};
+                  let stroke = variables.accent;
+
+                  if (Array.isArray(a.rgb_color)) {
+                    const [r,g,b] = a.rgb_color; stroke = `rgba(${r}, ${g}, ${b}, 0.45)`;
+                  } else if (Array.isArray(a.hs_color)) {
+                    const [h,s] = a.hs_color; stroke = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.45)`;
+                  } else if (a.color_temp_kelvin != null) {
+                    const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
+                    const t = (k - 2000) / (6500 - 2000);
+                    const hue = Math.round(25 + t * (210 - 25));
+                    stroke = `hsla(${hue}, 100%, 56%, 0.45)`;
+                  } else {
+                    stroke = `${variables.accent}66`;
+                  }
+
+                  return `1px solid ${stroke}`;
+                ]]]
+      - value: open
+        styles:
+          card:
+            - background: >-
+                linear-gradient(145deg, var(--accent-color)1A,
+                var(--ha-card-background, var(--card-background-color)))
+      - value: playing
+        styles:
+          icon:
+            - color: '[[[ return variables.accent ]]]'
+    icon: |
+      [[[
+        if (variables.icon_name) return variables.icon_name;
+        if (variables.icon_on || variables.icon_off) {
+          const s = entity?.state;
+          const active = ['on','open','playing','heating','cooling'].includes(s);
+          if (active && variables.icon_on) return variables.icon_on;
+          const inactive = ['off','closed','idle','standby','unavailable'].includes(s);
+          if (inactive && variables.icon_off) return variables.icon_off;
+        }
+        return entity?.attributes?.icon || 'mdi:lightbulb';
+      ]]]
+    label: |
+      [[[
+        if (variables.subtitle) return variables.subtitle;
+        if (!entity) return '';
+        const a = entity.attributes || {};
+        if (a.brightness != null && ['on','open','playing'].includes(entity.state)) {
+          return `${Math.round(a.brightness / 2.54)}%`;
+        }
+        const s = (entity.state || '').toString();
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      ]]]
+  realistic_button_climate:
+    template: realistic_button
+    variables:
+      ambient_sensor: null
+      show_setpoint: true
+      show_humidity: false
+      show_mode: false
+      heat_color: '#ff7a3d'
+      cool_color: '#3b82f6'
+      auto_color: '#a855f7'
+      fan_color: '#22c55e'
+      dry_color: '#f59e0b'
+      idle_color: rgba(255,255,255,0.06)
+      off_color: rgba(255,255,255,0.04)
+      unavailable_color: '#777'
+      bg_tint_alpha: 0.18
+      icon_size_css: clamp(18px, 5.5vw, 26px)
+      name_font_css: clamp(12px, 3.2vw, 16px)
+      temp_font_css: clamp(20px, 7.0vw, 38px)
+      set_font_css: clamp(10px, 2.8vw, 14px)
+      sub_font_css: clamp(10px, 2.4vw, 13px)
+    show_label: false
+    show_name: true
+    show_icon: true
+    aspect_ratio: 1/1
+    size: '[[[ return variables.icon_size_css; ]]]'
+    styles:
+      grid:
+        - grid-template-areas: '"i badge" "n n" "temp temp" "footer footer"'
+        - grid-template-columns: 1fr auto
+        - grid-template-rows: auto auto 1fr auto
+      card:
+        - position: relative
+        - overflow: hidden
+        - background: |
+            [[[
+              var a = (entity && entity.attributes) ? entity.attributes : {};
+              var action = String(a.hvac_action || '').toLowerCase();
+              var mode   = String(a.hvac_mode   || entity.state || '').toLowerCase();
+              var s = action || mode;
+
+              function pickColor(state){
+                if (state.indexOf('cool') !== -1) return variables.cool_color;
+                if (state.indexOf('heat') !== -1) return variables.heat_color;
+                if (state.indexOf('auto') !== -1) return variables.auto_color;
+                if (state.indexOf('fan')  !== -1) return variables.fan_color;
+                if (state.indexOf('dry')  !== -1) return variables.dry_color;
+                if (state === 'off')               return variables.off_color;
+                if (state === 'unavailable')       return variables.unavailable_color;
+                // idle/unknown fallbacks
+                return variables.idle_color;
+              }
+
+              var col  = pickColor(s || 'idle');
+              var base = 'var(--ha-card-background, var(--card-background-color))';
+              // alpha → hex
+              var aF   = Math.max(0, Math.min(1, Number(variables.bg_tint_alpha || 0.18)));
+              var hexA = Math.round(aF * 255).toString(16).padStart(2,'0');
+              // if hex color, add alpha; if rgb/hsl, just use a gradient with transparency
+              var tint = (String(col).charAt(0)==='#' && String(col).length===7) ? (col + hexA) : col;
+              return `linear-gradient(0deg, ${tint}, transparent 70%), ${base}`;
+            ]]]
+      icon:
+        - color: |
+            [[[
+              var a = (entity && entity.attributes) ? entity.attributes : {};
+              var action = String(a.hvac_action || '').toLowerCase();
+              var mode   = String(a.hvac_mode   || entity.state || '').toLowerCase();
+              var s = action || mode;
+              if (s.indexOf('cool') !== -1) return variables.cool_color;
+              if (s.indexOf('heat') !== -1) return variables.heat_color;
+              if (s.indexOf('auto') !== -1) return variables.auto_color;
+              if (s.indexOf('fan')  !== -1) return variables.fan_color;
+              if (s.indexOf('dry')  !== -1) return variables.dry_color;
+              return 'var(--secondary-text-color)';
+            ]]]
+        - z-index: 3
+      name:
+        - font-size: '[[[ return variables.name_font_css; ]]]'
+        - justify-self: center
+        - text-align: center
+        - z-index: 3
+      custom_fields:
+        temp:
+          - font-size: '[[[ return variables.temp_font_css; ]]]'
+          - line-height: 1
+          - font-weight: 700
+          - letter-spacing: '-0.5px'
+          - color: var(--primary-text-color)
+          - align-self: center
+          - justify-self: center
+          - z-index: 3
+        footer:
+          - font-size: '[[[ return variables.set_font_css; ]]]'
+          - opacity: 0.9
+          - color: var(--secondary-text-color)
+          - justify-self: center
+          - text-align: center
+          - align-self: center
+          - margin-top: 6px
+          - z-index: 3
+    icon: |
+      [[[
+        var a = (entity && entity.attributes) ? entity.attributes : {};
+        var s = String(a.hvac_action || a.hvac_mode || entity.state || '').toLowerCase();
+        if (s.indexOf('cool') !== -1) return 'mdi:snowflake';
+        if (s.indexOf('heat') !== -1) return 'mdi:fire';
+        if (s.indexOf('auto') !== -1) return 'mdi:thermostat-auto';
+        if (s.indexOf('fan')  !== -1) return 'mdi:fan';
+        if (s.indexOf('dry')  !== -1) return 'mdi:water-percent-off';
+        if (s === 'off')               return 'mdi:power';
+        return 'mdi:thermostat';
+      ]]]
+    custom_fields:
+      temp: |
+        [[[
+          // Choose ambient sensor or climate's current_temperature
+          var id = variables.ambient_sensor;
+          var t  = null;
+          if (id && states[id]) {
+            var v = parseFloat(states[id].state);
+            if (!isNaN(v)) t = v;
+          } else if (entity && entity.attributes && entity.attributes.current_temperature != null) {
+            t = parseFloat(entity.attributes.current_temperature);
+          }
+          if (t === null || isNaN(t)) return '—';
+          // Show integer if clean, else one decimal
+          var s = (Math.abs(t - Math.round(t)) < 0.05) ? String(Math.round(t)) : t.toFixed(1);
+          return s + '°';
+        ]]]
+      footer: |
+        [[[
+          var a = (entity && entity.attributes) ? entity.attributes : {};
+          var parts = [];
+
+          if (variables.show_setpoint) {
+            var lo = a.target_temp_low, hi = a.target_temp_high, sp = a.temperature;
+            if (typeof lo === 'number' && typeof hi === 'number') {
+              parts.push('Set ' + Math.round(lo) + '–' + Math.round(hi) + '°');
+            } else if (typeof sp === 'number') {
+              parts.push('Set ' + Math.round(sp) + '°');
+            }
+          }
+
+          if (variables.show_mode) {
+            var s = String(a.hvac_action || a.hvac_mode || entity.state || '').toLowerCase();
+            // prettify
+            if (s) parts.push(s.charAt(0).toUpperCase() + s.slice(1));
+          }
+
+          if (variables.show_humidity && typeof a.current_humidity === 'number') {
+            parts.push(a.current_humidity + '% RH');
+          }
+
+          return parts.join(' • ');
+        ]]]
+  realistic_button_fireplace:
+    template: realistic_button
+    icon: mdi:fire
+    variables:
+      fireplace_high_states:
+        - high
+        - hi
+        - max
+        - on_high
+        - on hi
+        - '3'
+      fireplace_low_states:
+        - low
+        - lo
+        - min
+        - on_low
+        - on low
+        - '2'
+      fireplace_noheat_states:
+        - 'on'
+        - '1'
+      fireplace_attr: null
+      fireplace_high_color: '#ff3b3b'
+      fireplace_low_color: '#ff3b3b'
+      fireplace_noheat_color: '#ff9900'
+      fireplace_full_glow: true
+      fireplace_glow_alpha: 0.26
+      flame_enabled: true
+      flame_speed: 2.8s
+      flame_flicker_speed: 1.3s
+      flame_move_y_min: 0%
+      flame_move_y_max: '-4%'
+      flame_scale_min: 1
+      flame_scale_max: 0.95
+      flame_flicker_min: 0.92
+      flame_flicker_max: 1.08
+    styles:
+      icon:
+        - color: |
+            [[[
+              var e = entity || {};
+              var a = e.attributes || {};
+              var v = '';
+              if (variables.fireplace_attr && a[variables.fireplace_attr] != null) v = String(a[variables.fireplace_attr]).toLowerCase();
+              else if (a.preset_mode) v = String(a.preset_mode).toLowerCase();
+              else if (a.flame)       v = String(a.flame).toLowerCase();
+              else if (a.level)       v = String(a.level).toLowerCase();
+              else                    v = String(e.state || '').toLowerCase();
+
+              var hi = (variables.fireplace_high_states || []).map(function(x){return String(x).toLowerCase();});
+              var lo = (variables.fireplace_low_states  || []).map(function(x){return String(x).toLowerCase();});
+              var noheat = (variables.fireplace_noheat_states  || []).map(function(x){return String(x).toLowerCase();});
+
+              if (hi.indexOf(v) !== -1) return variables.fireplace_high_color || '#ff3b3b';
+              if (lo.indexOf(v) !== -1) return variables.fireplace_low_color  || '#ff3b3b';
+              if (noheat.indexOf(v) !== -1) return variables.fireplace_noheat_color  || '#ff9900';
+              return 'var(--secondary-text-color)';
+            ]]]
+        - z-index: 3
+      custom_fields:
+        glow:
+          - position: absolute
+          - inset: 0
+          - border-radius: inherit
+          - pointer-events: none
+          - z-index: 0
+          - mix-blend-mode: screen
+          - transform-origin: 50% 90%
+          - will-change: transform, filter
+          - '--rb-mvy0': '[[[ return variables.flame_move_y_min || "0%"; ]]]'
+          - '--rb-mvy1': '[[[ return variables.flame_move_y_max || "-6%"; ]]]'
+          - '--rb-scy0': '[[[ return variables.flame_scale_min   || 1; ]]]'
+          - '--rb-scy1': '[[[ return variables.flame_scale_max   || 0.95; ]]]'
+          - '--rb-fk-min': '[[[ return variables.flame_flicker_min || 0.92; ]]]'
+          - '--rb-fk-max': '[[[ return variables.flame_flicker_max || 1.08; ]]]'
+          - background: |
+              [[[
+                // resolve fireplace level → color
+                var e = entity || {}, a = e.attributes || {};
+                var v = '';
+                if (variables.fireplace_attr && a[variables.fireplace_attr] != null) v = String(a[variables.fireplace_attr]).toLowerCase();
+                else if (a.preset_mode) v = String(a.preset_mode).toLowerCase();
+                else if (a.flame)       v = String(a.flame).toLowerCase();
+                else if (a.level)       v = String(a.level).toLowerCase();
+                else                    v = String(e.state || '').toLowerCase();
+
+                var hi = (variables.fireplace_high_states || []).map(function(x){return String(x).toLowerCase();});
+                var lo = (variables.fireplace_low_states  || []).map(function(x){return String(x).toLowerCase();});
+                var noheat = (variables.fireplace_noheat_states  || []).map(function(x){return String(x).toLowerCase();});
+
+                var col = null;
+                if (hi.indexOf(v) !== -1) col = String(variables.fireplace_high_color || '#ff3b3b');
+                else if (lo.indexOf(v) !== -1) col = String(variables.fireplace_low_color  || '#ff3b3b');
+                else if (noheat.indexOf(v) !== -1) col = String(variables.fireplace_noheat_color  || '#ff9900');
+                if (!col) return 'transparent';
+
+                // helper to build radial layer (the moving "flame")
+                var flame = function(c, alpha){
+                  var at = 'radial-gradient(120% 95% at 50% 88%, ' + c + alpha + ', transparent 62%)';
+                  return at;
+                };
+                // choose layers:
+                //  - full tint base (linear) for "on"
+                //  - moving radial on top so motion is visible
+                var full = (variables.fireplace_full_glow === true || String(variables.fireplace_full_glow) === 'true');
+                if (full) {
+                  var aF = Math.max(0, Math.min(1, Number(variables.fireplace_glow_alpha || 0.26)));
+                  var ah = Math.round(aF*255).toString(16).padStart(2,'0');
+                  var lin = (col.charAt(0)==='#' && col.length===7)
+                            ? 'linear-gradient(0deg,' + col + ah + ',' + col + ah + ')'
+                            : 'linear-gradient(0deg,' + col + ',' + col + ')';
+                  var rad = flame(col.charAt(0)==='#' && col.length===7 ? col : col, '88'); // stronger alpha for the moving layer
+                  return rad + ', ' + lin;   // moving radial on top, flat tint below
+                } else {
+                  // bottom-only radial (moving)
+                  var cm = (col.charAt(0)==='#' && col.length===7) ? col : col;
+                  return flame(cm, '77');
+                }
+              ]]]
+          - opacity: |
+              [[[
+                var e = entity || {}, a = e.attributes || {};
+                var v = '';
+                if (variables.fireplace_attr && a[variables.fireplace_attr] != null) v = String(a[variables.fireplace_attr]).toLowerCase();
+                else if (a.preset_mode) v = String(a.preset_mode).toLowerCase();
+                else if (a.flame)       v = String(a.flame).toLowerCase();
+                else if (a.level)       v = String(a.level).toLowerCase();
+                else                    v = String(e.state || '').toLowerCase();
+
+                var hi = (variables.fireplace_high_states || []).map(function(x){return String(x).toLowerCase();});
+                var lo = (variables.fireplace_low_states  || []).map(function(x){return String(x).toLowerCase();});
+                var noheat = (variables.fireplace_noheat_states  || []).map(function(x){return String(x).toLowerCase();});
+                return (hi.indexOf(v) !== -1 || lo.indexOf(v) !== -1 || noheat.indexOf(v) !== -1) ? 1 : 0;
+              ]]]
+          - animation: |
+              [[[
+                if (!(variables.flame_enabled === true || String(variables.flame_enabled) === 'true')) return 'none';
+                var mv = 'rb_flame_move ' + (variables.flame_speed || '2.8s') + ' ease-in-out infinite alternate';
+                var fk = 'rb_flame_flicker ' + (variables.flame_flicker_speed || '1.3s') + ' linear infinite';
+                return mv + ', ' + fk;
+              ]]]
+        label: |
+          [[[
+            var e = entity || {};
+            var a = e.attributes || {};
+            var v = '';
+            if (variables.fireplace_attr && a[variables.fireplace_attr] != null) v = String(a[variables.fireplace_attr]).toLowerCase();
+            else if (a.preset_mode) v = String(a.preset_mode).toLowerCase();
+            else if (a.flame)       v = String(a.flame).toLowerCase();
+            else if (a.level)       v = String(a.level).toLowerCase();
+            else                    v = String(e.state || '').toLowerCase();
+
+            var hi = (variables.fireplace_high_states || []).map(function(x){return String(x).toLowerCase();});
+            var lo = (variables.fireplace_low_states  || []).map(function(x){return String(x).toLowerCase();});
+            var noheat = (variables.fireplace_noheat_states  || []).map(function(x){return String(x).toLowerCase();});
+
+            if (hi.indexOf(v) !== -1) return 'High';
+            if (lo.indexOf(v) !== -1) return 'Low';
+            if (noheat.indexOf(v) !== -1) return 'No Heat';
+            return '';
+          ]]]
+    extra_styles: |
+      @keyframes rb_flame_move {
+        0%   { transform: translateY(var(--rb-mvy0)) scaleY(var(--rb-scy0)); }
+        100% { transform: translateY(var(--rb-mvy1)) scaleY(var(--rb-scy1)); }
+      }
+      @keyframes rb_flame_flicker {
+        0%   { filter: brightness(var(--rb-fk-min)); }
+        25%  { filter: brightness(var(--rb-fk-max)); }
+        47%  { filter: brightness(var(--rb-fk-min)); }
+        62%  { filter: brightness(var(--rb-fk-max)); }
+        78%  { filter: brightness(var(--rb-fk-min)); }
+        100% { filter: brightness(1); }
+      }
