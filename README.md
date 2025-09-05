@@ -1,4 +1,4 @@
-## Realistic Buttons for Home Assistant
+## Realistic Button Templates for Home Assistant
 
 A set of polished button-card templates for lights, media, climate, fireplaces, and fans—designed to look realistic with soft depth, a glossy top, and dynamic “glow” that reflects device state (including true light colors and Twinkly effects).
 
