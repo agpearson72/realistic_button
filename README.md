@@ -11,6 +11,9 @@ A set of polished button-card templates for lights, media, climate, fireplaces, 
 > * realistic_button_fireplace
 
 > * realistic_button_fan
+>
+> * <img width="1048" height="730" alt="image" src="https://github.com/user-attachments/assets/4238f465-ee4a-4bc5-ba02-54af1135b642" />
+
 
 
 ## Installation
