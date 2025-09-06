@@ -25,7 +25,8 @@ A set of polished button-card templates for lights, media, climate, fireplaces, 
 
 1. Use the examples below for each template.
 
-> Tip: Keep the default aspect_ratio: 1/1 unless you explicitly want a rectangle. Avoid wrapping aspect_ratio in [[[ ... ]]]—it can break layout/stacking.
+> Tip: Keep the default aspect_ratio: 1/1 unless you explicitly want a rectangle. Avoid wrapping aspect_ratio in [[[ ... ]]]—it can break layout/stacking.<BR>
+> If you use a Grid, set "square: false" if you want to use aspect_ratio to change the button's shape.
 
 
 ## Common Design & Anatomy
