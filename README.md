@@ -132,7 +132,7 @@ Shows orange/red glow for low/high, with an optional animated flame (moving/flic
 ### Example
 <img width="749" height="267" alt="image" src="https://github.com/user-attachments/assets/027cb41f-58a6-4094-acb3-02465f58b961" /><BR>
 
-## Variables (fireplace)
+### Variables (fireplace)
 
 
 Variable | Type | Default | Notes
