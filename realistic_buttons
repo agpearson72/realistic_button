@@ -183,17 +183,19 @@ button_card_templates:
         - margin-top: 8px
         - font-weight: 400
         - justify-self: center
+        - text-align: center
         - color: var(--primary-text-color)
         - z-index: 2
       label:
         - justify-self: center
-        - margin-top: 2px
+        - text-align: center
         - opacity: 0.75
         - font-size: 0.8em
         - color: var(--secondary-text-color)
         - z-index: 2
       state:
         - justify-self: center
+        - text-align: center
         - margin-top: 2px
         - font-size: 0.82em
         - opacity: 0.85
@@ -851,7 +853,7 @@ button_card_templates:
       grid:
         - grid-template-areas: '"i badge" "n n" "temp temp" "footer footer"'
         - grid-template-columns: 1fr auto
-        - grid-template-rows: auto auto 1fr auto
+        - grid-template-rows: auto auto auto auto
       card:
         - position: relative
         - overflow: hidden
@@ -959,9 +961,9 @@ button_card_templates:
           if (variables.show_setpoint) {
             var lo = a.target_temp_low, hi = a.target_temp_high, sp = a.temperature;
             if (typeof lo === 'number' && typeof hi === 'number') {
-              parts.push('Set ' + Math.round(lo) + '–' + Math.round(hi) + '°');
+              parts.push(Math.round(lo) + '–' + Math.round(hi) + '°');
             } else if (typeof sp === 'number') {
-              parts.push('Set ' + Math.round(sp) + '°');
+              parts.push(Math.round(sp) + '°');
             }
           }
 
@@ -972,7 +974,7 @@ button_card_templates:
           }
 
           if (variables.show_humidity && typeof a.current_humidity === 'number') {
-            parts.push(a.current_humidity + '% RH');
+            parts.push(a.current_humidity + '%');
           }
 
           return parts.join(' • ');
@@ -1151,3 +1153,155 @@ button_card_templates:
         78%  { filter: brightness(var(--rb-fk-min)); }
         100% { filter: brightness(1); }
       }
+  realistic_button_fan:
+    template: realistic_button
+    icon: mdi:fan
+    variables:
+      fan_control_entity: null
+      fan_on_color: rgb(0,200,0)
+      fan_off_color: var(--secondary-text-color)
+      fan_unavailable_color: rgb(255,0,0)
+      fan_speed_labels:
+        '33': Low
+        '66': Medium
+        '100': High
+      fan_spin_low: 2.3s
+      fan_spin_med: 1.2s
+      fan_spin_high: .5s
+      fan_low_threshold: 33
+      fan_med_threshold: 66
+      fan_value_attr: auto
+    show_label: true
+    show_state: false
+    show_entity_picture: false
+    label: |
+      [[[
+        const a = entity?.attributes || {};
+        // read percentage with graceful fallbacks
+        function pct() {
+          if (String(variables.fan_value_attr||'auto') === 'percentage') return Number(a.percentage);
+          if (String(variables.fan_value_attr||'auto') === 'speed') {
+            const s = String(a.speed||'').toLowerCase();
+            if (!s) return NaN;
+            if (s === 'off') return 0;
+            if (s === 'low') return 33;
+            if (s === 'medium' || s === 'med') return 66;
+            if (s === 'high' || s === 'max') return 100;
+            return NaN;
+          }
+          if (String(variables.fan_value_attr||'auto') === 'preset_mode') {
+            const s = String(a.preset_mode||'').toLowerCase();
+            if (!s) return NaN;
+            if (s === 'off') return 0;
+            if (s === 'low') return 33;
+            if (s === 'medium' || s === 'med') return 66;
+            if (s === 'high' || s === 'max') return 100;
+            return NaN;
+          }
+          // auto:
+          let p = Number(a.percentage);
+          if (!isNaN(p)) return p;
+          const s1 = String(a.speed||'').toLowerCase();
+          if (s1) {
+            if (s1 === 'off') return 0;
+            if (s1 === 'low') return 33;
+            if (s1 === 'medium' || s1 === 'med') return 66;
+            if (s1 === 'high' || s1 === 'max') return 100;
+          }
+          const s2 = String(a.preset_mode||'').toLowerCase();
+          if (s2) {
+            if (s2 === 'off') return 0;
+            if (s2 === 'low') return 33;
+            if (s2 === 'medium' || s2 === 'med') return 66;
+            if (s2 === 'high' || s2 === 'max') return 100;
+          }
+          return NaN;
+        }
+
+        const p = pct();
+        if (isNaN(p)) return '—';
+        if (p <= 0) return '';
+
+        // Use your map first, otherwise show raw %
+        const map = variables.fan_speed_labels || {};
+        const mapped = map[String(p)];
+        return mapped ? mapped : `${p}%`;
+      ]]]
+    styles:
+      card:
+        - font-size: 10px
+      icon:
+        - position: relative
+        - z-index: 3
+        - color: |
+            [[[
+              const s = entity?.state;
+              if (s === 'unavailable') return variables.fan_unavailable_color || 'rgb(255,0,0)';
+              if (s === 'on')          return variables.fan_on_color || 'rgb(0,200,0)';
+              return variables.fan_off_color || 'var(--secondary-text-color)';
+            ]]]
+        - animation: |
+            [[[
+              const s = entity?.state;
+              const a = entity?.attributes || {};
+              if (s !== 'on') return 'none';
+
+              function pct() {
+                const mode = String(variables.fan_value_attr||'auto');
+                if (mode === 'percentage') return Number(a.percentage);
+                if (mode === 'speed') {
+                  const sp = String(a.speed||'').toLowerCase();
+                  if (sp === 'off') return 0;
+                  if (sp === 'low') return 33;
+                  if (sp === 'medium' || sp === 'med') return 66;
+                  if (sp === 'high' || sp === 'max') return 100;
+                  return NaN;
+                }
+                if (mode === 'preset_mode') {
+                  const pm = String(a.preset_mode||'').toLowerCase();
+                  if (pm === 'off') return 0;
+                  if (pm === 'low') return 33;
+                  if (pm === 'medium' || pm === 'med') return 66;
+                  if (pm === 'high' || pm === 'max') return 100;
+                  return NaN;
+                }
+                // auto:
+                let p = Number(a.percentage);
+                if (!isNaN(p)) return p;
+                const s1 = String(a.speed||'').toLowerCase();
+                if (s1) {
+                  if (s1 === 'off') return 0;
+                  if (s1 === 'low') return 33;
+                  if (s1 === 'medium' || s1 === 'med') return 66;
+                  if (s1 === 'high' || s1 === 'max') return 100;
+                }
+                const s2 = String(a.preset_mode||'').toLowerCase();
+                if (s2) {
+                  if (s2 === 'off') return 0;
+                  if (s2 === 'low') return 33;
+                  if (s2 === 'medium' || s2 === 'med') return 66;
+                  if (s2 === 'high' || s2 === 'max') return 100;
+                }
+                return NaN;
+              }
+
+              const p = pct();
+              if (isNaN(p) || p <= 0) return 'none';
+
+              const lowT = Number(variables.fan_low_threshold || 33);
+              const medT = Number(variables.fan_med_threshold || 66);
+              if (p >= 100) return `rotating ${variables.fan_spin_high || '.5s'} linear infinite`;
+              if (p >= medT) return `rotating ${variables.fan_spin_med  || '1.2s'} linear infinite`;
+              if (p >= lowT) return `rotating ${variables.fan_spin_low  || '2.3s'} linear infinite`;
+              return `rotating ${variables.fan_spin_low || '2.3s'} linear infinite`;
+            ]]]
+    tap_action:
+      action: call-service
+      service: fan.toggle
+      service_data:
+        entity_id: |
+          [[[
+            return variables.fan_control_entity || entity.entity_id;
+          ]]]
+    hold_action:
+      action: more-info
