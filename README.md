@@ -75,10 +75,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
 <meta name=ProgId content=Excel.Sheet>
 <meta name=Generator content="Microsoft Excel 15">
-<link id=Main-File rel=Main-File
-href="file:///C:/Users/AGPEAR~1/AppData/Local/Temp/msohtmlclip1/01/clip.htm">
-<link rel=File-List
-href="file:///C:/Users/AGPEAR~1/AppData/Local/Temp/msohtmlclip1/01/clip_filelist.xml">
+
 <!--table
 	{mso-displayed-decimal-separator:"\.";
 	mso-displayed-thousand-separator:"\,";}
