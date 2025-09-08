@@ -1157,8 +1157,8 @@ button_card_templates:
     template: realistic_button
     icon: mdi:fan
     variables:
-      fan_control_entity: null
-      fan_on_color: rgb(0,200,0)
+      fan_control_entity: false
+      fan_on_color: rgb(34,197,94)
       fan_off_color: var(--secondary-text-color)
       fan_unavailable_color: rgb(255,0,0)
       fan_speed_labels:
@@ -1171,9 +1171,17 @@ button_card_templates:
       fan_low_threshold: 33
       fan_med_threshold: 66
       fan_value_attr: auto
+      fan_glow_color: 'var(--rb-fan-glow-color, #22c55e)'
+      fan_glow_alpha: 0.3
+      fan_glow_full: false
     show_label: true
     show_state: false
     show_entity_picture: false
+    custom_fields:
+      fan_glow: |
+        [[[
+          return variables.fan_glow_color ? ' ' : '';
+        ]]]
     label: |
       [[[
         const a = entity?.attributes || {};
@@ -1295,13 +1303,51 @@ button_card_templates:
               if (p >= lowT) return `rotating ${variables.fan_spin_low  || '2.3s'} linear infinite`;
               return `rotating ${variables.fan_spin_low || '2.3s'} linear infinite`;
             ]]]
-    tap_action:
-      action: call-service
-      service: fan.toggle
-      service_data:
-        entity_id: |
-          [[[
-            return variables.fan_control_entity || entity.entity_id;
-          ]]]
-    hold_action:
-      action: more-info
+      custom_fields:
+        fan_glow:
+          - position: absolute
+          - inset: 0
+          - border-radius: inherit
+          - pointer-events: none
+          - z-index: 0
+          - mix-blend-mode: normal
+          - background: |
+              [[[
+                const col = String(variables.fan_glow_color || '#22c55e').trim();
+                const a   = Math.max(0, Math.min(1, Number(variables.fan_glow_alpha ?? 0.30)));
+                const pct = Math.round(a * 100);
+
+                function withAlpha(c, alpha){
+                  if (c.startsWith('rgba(') || c.startsWith('hsla(')) return c;
+                  let m;
+                  if ((m=c.match(/^rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)$/)))
+                    return `rgba(${m[1]},${m[2]},${m[3]},${alpha})`;
+                  if ((m=c.match(/^hsl\(\s*([\d.]+)\s*,\s*([\d.]+)%\s*,\s*([\d.]+)%\s*\)$/)))
+                    return `hsla(${m[1]},${m[2]}%,${m[3]}%,${alpha})`;
+                  if (c[0]==='#'){
+                    let h=c.slice(1); if (h.length===3) h=h.split('').map(x=>x+x).join('');
+                    const r=parseInt(h.slice(0,2),16), g=parseInt(h.slice(2,4),16), b=parseInt(h.slice(4,6),16);
+                    return `rgba(${r},${g},${b},${alpha})`;
+                  }
+                  // var(...) or named color → use color-mix for alpha
+                  return `color-mix(in srgb, ${c} ${pct}%, transparent)`;
+                }
+
+                const paint = withAlpha(col, a);
+                return `radial-gradient(120% 90% at 50% 88%, ${paint}, transparent 65%)`;
+              ]]]
+          - opacity: |
+              [[[
+                return entity?.state === 'on' ? 1 : 0;
+              ]]]
+              - transition: opacity 0.2s ease
+        tap_action:
+          action: call-service
+          service: fan.toggle
+          service_data:
+            entity_id: |
+              [[[
+                return variables.fan_control_entity || entity.entity_id;
+              ]]]
+        hold_action:
+          action: more-info
