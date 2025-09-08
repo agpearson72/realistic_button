@@ -220,10 +220,7 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
 <meta name=ProgId content=Excel.Sheet>
 <meta name=Generator content="Microsoft Excel 15">
-<link id=Main-File rel=Main-File
-href="file:///C:/Users/AGPEAR~1/AppData/Local/Temp/msohtmlclip1/01/clip.htm">
-<link rel=File-List
-href="file:///C:/Users/AGPEAR~1/AppData/Local/Temp/msohtmlclip1/01/clip_filelist.xml">
+
 <!--table
 	{mso-displayed-decimal-separator:"\.";
 	mso-displayed-thousand-separator:"\,";}
@@ -337,10 +334,6 @@ xmlns="http://www.w3.org/TR/REC-html40">
 
 <meta name=ProgId content=Excel.Sheet>
 <meta name=Generator content="Microsoft Excel 15">
-<link id=Main-File rel=Main-File
-href="file:///C:/Users/AGPEAR~1/AppData/Local/Temp/msohtmlclip1/01/clip.htm">
-<link rel=File-List
-href="file:///C:/Users/AGPEAR~1/AppData/Local/Temp/msohtmlclip1/01/clip_filelist.xml">
 
 <!--table
 	{mso-displayed-decimal-separator:"\.";
@@ -441,6 +434,34 @@ flame_flicker_min/max | number | 0.92/1.08 | Brightness flicker
 </body>
 </html>
 
+## Fan Template — realistic_button_fan
+A button-card template (inherits realistic_button) for fans.
+It:
+
+> Colors the icon by state (on / off / unavailable)
+
+> Shows a speed label: Low / Medium / High (or raw %)
+
+> Spins the icon at variable rates based on speed/percentage
+
+> Adds a configurable glow (color, alpha, bottom-radial or full-card)
+
+> Can control a different fan on tap (handy for linked controls)
+
+Requires: custom:button-card and your base realistic_button template to be loaded.
+
+<img width="587" height="435" alt="image" src="https://github.com/user-attachments/assets/8b9c0c46-67ed-4f1d-b6ff-9189a5e8939c" />
+
+### Basic Usage:
+<img width="754" height="124" alt="image" src="https://github.com/user-attachments/assets/797ba56d-39ac-41a1-a9de-9d84f5ad3650" />
+
+### Per-Card Glow Override:
+<img width="748" height="212" alt="image" src="https://github.com/user-attachments/assets/77cfc308-4aed-4bdd-bd99-11207a6c4671" />
+
+### If your integration doesn't expose percentage:
+<img width="754" height="75" alt="image" src="https://github.com/user-attachments/assets/d3a74385-bfe7-4d0d-9fe1-25332dc84d3d" />
+
+
 ### Tap/Hold (defaults):
 <img width="748" height="169" alt="image" src="https://github.com/user-attachments/assets/f574f27e-1974-4fa3-896f-1e1838a6737c" />
 
@@ -453,7 +474,6 @@ Applied on the media_player button
 ### Entity pictures (cover/TV/app artwork)
 <img width="754" height="439" alt="image" src="https://github.com/user-attachments/assets/9b4ce39b-02a2-4ad1-a987-858092b221a7" />
 
-
 ### Locking a dangerous control (e.g., garage door)
 <img width="760" height="158" alt="image" src="https://github.com/user-attachments/assets/94efa070-232a-4f9e-8585-b94f99cfd092" />
 
@@ -461,6 +481,10 @@ Applied on the media_player button
 Use triggers_update to watch related entities—e.g., fans, Apple TV, Twinkly group members.
 
 ### Troubleshooting
+* **Fan glow looks yellow / too bright**
+> You might be stacking the base glow from realistic_button with the fan glow. Disable the base non-light glow for fan cards using:
+> <img width="718" height="76" alt="image" src="https://github.com/user-attachments/assets/e1baf3ae-5ff1-41c8-838e-64b3a98a0dc2" />
+
 * **Buttons stack unexpectedly**
 > Keep aspect_ratio as a literal 1/1, not a JS template string.
 * **No icon showing**
