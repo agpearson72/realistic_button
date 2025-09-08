@@ -66,102 +66,6 @@ Use this for lights, switches, sensors, media, etc. It automatically:
 ## Useful variables (base)
 
 
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:x="urn:schemas-microsoft-com:office:excel"
-xmlns="http://www.w3.org/TR/REC-html40">
-
-<head>
-
-<meta name=ProgId content=Excel.Sheet>
-<meta name=Generator content="Microsoft Excel 15">
-
-<!--table
-	{mso-displayed-decimal-separator:"\.";
-	mso-displayed-thousand-separator:"\,";}
-@page
-	{margin:.75in .7in .75in .7in;
-	mso-header-margin:.3in;
-	mso-footer-margin:.3in;}
-.font0
-	{color:black;
-	font-size:11.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Aptos Narrow", sans-serif;
-	mso-font-charset:0;}
-.font5
-	{color:black;
-	font-size:10.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Arial Unicode MS";
-	mso-generic-font-family:auto;
-	mso-font-charset:0;}
-tr
-	{mso-height-source:auto;}
-col
-	{mso-width-source:auto;}
-br
-	{mso-data-placement:same-cell;}
-td
-	{padding-top:1px;
-	padding-right:1px;
-	padding-left:1px;
-	mso-ignore:padding;
-	color:black;
-	font-size:11.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Aptos Narrow", sans-serif;
-	mso-font-charset:0;
-	mso-number-format:General;
-	text-align:general;
-	vertical-align:bottom;
-	border:none;
-	mso-background-source:auto;
-	mso-pattern:auto;
-	mso-protection:locked visible;
-	white-space:nowrap;
-	mso-rotate:0;}
-.xl63
-	{font-weight:700;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl64
-	{text-align:left;}
-.xl65
-	{font-size:10.0pt;
-	font-family:"Arial Unicode MS";
-	mso-generic-font-family:auto;
-	mso-font-charset:0;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl66
-	{text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl67
-	{font-style:italic;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
--->
-
-</head>
-
-<body link="#467886" vlink="#96607D">
-
-
 Variable | Type | Default | Notes
 -- | -- | -- | --
 accent | color | var(--accent-color) | Fallback   accent
@@ -186,9 +90,6 @@ twinkly_multi_mode | enum | blend | blend or single
 twinkly_effect_map | dict | (provided) | Map   effect→single color
 twinkly_effect_palettes | dict | (provided) | Effect→palette   (multi)
 
-</body>
-</html>
-
 ### Twinkly: multi-color glow
 <img width="758" height="131" alt="image" src="https://github.com/user-attachments/assets/70fbdef8-2027-4f39-b5b7-2476d811f9c8" /><BR>
 The glow will render a multi-stop radial gradient when an effect name matches.
@@ -203,98 +104,10 @@ The glow will render a multi-stop radial gradient when an effect name matches.
 
 
 ## Climate Template — realistic_button_climate
-Adds a big temperature and an HVAC-tinted background. Works with hvac_action or hvac_mode. Optionally read ambient from a separate sensor.
+Adds a big temperature and an HVAC-tinted background. Works with hvac_action or hvac_mode. Optionally read ambient from a separate sensor.<BR>
 <img width="752" height="200" alt="image" src="https://github.com/user-attachments/assets/d4cada10-c44b-4f71-b223-13a0703b2aa3" />
 
 ### Variables (climate)
-
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:x="urn:schemas-microsoft-com:office:excel"
-xmlns="http://www.w3.org/TR/REC-html40">
-
-<head>
-
-<meta name=ProgId content=Excel.Sheet>
-<meta name=Generator content="Microsoft Excel 15">
-
-<!--table
-	{mso-displayed-decimal-separator:"\.";
-	mso-displayed-thousand-separator:"\,";}
-@page
-	{margin:.75in .7in .75in .7in;
-	mso-header-margin:.3in;
-	mso-footer-margin:.3in;}
-.font5
-	{color:black;
-	font-size:10.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Arial Unicode MS";
-	mso-generic-font-family:auto;
-	mso-font-charset:0;}
-tr
-	{mso-height-source:auto;}
-col
-	{mso-width-source:auto;}
-br
-	{mso-data-placement:same-cell;}
-td
-	{padding-top:1px;
-	padding-right:1px;
-	padding-left:1px;
-	mso-ignore:padding;
-	color:black;
-	font-size:11.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Aptos Narrow", sans-serif;
-	mso-font-charset:0;
-	mso-number-format:General;
-	text-align:general;
-	vertical-align:bottom;
-	border:none;
-	mso-background-source:auto;
-	mso-pattern:auto;
-	mso-protection:locked visible;
-	white-space:nowrap;
-	mso-rotate:0;}
-.xl65
-	{font-weight:700;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl66
-	{text-align:left;}
-.xl67
-	{font-size:10.0pt;
-	font-family:"Arial Unicode MS";
-	mso-generic-font-family:auto;
-	mso-font-charset:0;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl68
-	{text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl69
-	{font-style:italic;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
--->
-
-</head>
-
-<body link="#467886" vlink="#96607D">
-
 
 Variable | Type | Default | Notes
 -- | -- | -- | --
@@ -311,8 +124,7 @@ temp_font_css | CSS | clamp(20px,7vw,38px) | Responsive temp
 name_font_css | CSS | clamp(12px,3.2vw,16px) | Responsive name
 set_font_css | CSS | clamp(10px,2.8vw,14px) | Responsive footer
 
-</body>
-</html>
+
 The temp row uses 1fr to fill vertical space so the footer sits near the bottom.
 
 ## Fireplace Template — realistic_button_fireplace
@@ -321,95 +133,6 @@ Shows orange/red glow for low/high, with an optional animated flame (moving/flic
 <img width="749" height="267" alt="image" src="https://github.com/user-attachments/assets/027cb41f-58a6-4094-acb3-02465f58b961" /><BR>
 
 ## Variables (fireplace)
-
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:x="urn:schemas-microsoft-com:office:excel"
-xmlns="http://www.w3.org/TR/REC-html40">
-
-<head>
-
-<meta name=ProgId content=Excel.Sheet>
-<meta name=Generator content="Microsoft Excel 15">
-
-<!--table
-	{mso-displayed-decimal-separator:"\.";
-	mso-displayed-thousand-separator:"\,";}
-@page
-	{margin:.75in .7in .75in .7in;
-	mso-header-margin:.3in;
-	mso-footer-margin:.3in;}
-.font0
-	{color:black;
-	font-size:11.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Aptos Narrow", sans-serif;
-	mso-font-charset:0;}
-.font5
-	{color:black;
-	font-size:10.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Arial Unicode MS";
-	mso-generic-font-family:auto;
-	mso-font-charset:0;}
-tr
-	{mso-height-source:auto;}
-col
-	{mso-width-source:auto;}
-br
-	{mso-data-placement:same-cell;}
-td
-	{padding-top:1px;
-	padding-right:1px;
-	padding-left:1px;
-	mso-ignore:padding;
-	color:black;
-	font-size:11.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:"Aptos Narrow", sans-serif;
-	mso-font-charset:0;
-	mso-number-format:General;
-	text-align:general;
-	vertical-align:bottom;
-	border:none;
-	mso-background-source:auto;
-	mso-pattern:auto;
-	mso-protection:locked visible;
-	white-space:nowrap;
-	mso-rotate:0;}
-.xl65
-	{font-weight:700;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl66
-	{text-align:left;}
-.xl67
-	{font-size:10.0pt;
-	font-family:"Arial Unicode MS";
-	mso-generic-font-family:auto;
-	mso-font-charset:0;
-	text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
-.xl68
-	{text-align:left;
-	vertical-align:middle;
-	border:.5pt solid windowtext;
-	white-space:normal;}
--->
-
-</head>
-
-<body link="#467886" vlink="#96607D">
 
 
 Variable | Type | Default | Notes
@@ -428,26 +151,38 @@ flame_move_y_min/max | % | 0%/-4% | Vertical motion range
 flame_scale_min/max | number | 1 / 0.95 | Squeeze effect
 flame_flicker_min/max | number | 0.92/1.08 | Brightness flicker
 
-</body>
-</html>
 
 ## Fan Template — realistic_button_fan
 A button-card template (inherits realistic_button) for fans.
 It:
+> * Colors the icon by state (on / off / unavailable)
 
-> Colors the icon by state (on / off / unavailable)
+> * Shows a speed label: Low / Medium / High (or raw %)
 
-> Shows a speed label: Low / Medium / High (or raw %)
+> * Spins the icon at variable rates based on speed/percentage
 
-> Spins the icon at variable rates based on speed/percentage
+> * Adds a configurable glow (color, alpha, bottom-radial or full-card)
 
-> Adds a configurable glow (color, alpha, bottom-radial or full-card)
-
-> Can control a different fan on tap (handy for linked controls)
+> * Can control a different fan on tap (handy for linked controls)
 
 Requires: custom:button-card and your base realistic_button template to be loaded.
 
-<img width="587" height="435" alt="image" src="https://github.com/user-attachments/assets/8b9c0c46-67ed-4f1d-b6ff-9189a5e8939c" />
+Variable  |  Type  |  Default  |  What it does
+-- | -- | -- | --
+fan_control_entity | entity_id/false | FALSE | Target for tap action. If falsy, uses the card’s entity.
+fan_on_color | color | rgb(34,197,94) | Icon color when on.
+fan_off_color | colo | var(--secondary-text-color) | Icon color when off.
+fan_unavailable_color | color | rgb(255,0,0) | Icon color when unavailable.
+fan_speed_labels | map | {33: Low, 66: Medium, 100: High} | Map percentage → label text.
+fan_spin_low | time	2.3s | Spin duration at low speed.
+fan_spin_med | time	1.2s | Spin duration at medium speed.
+fan_spin_high | time | .5s | Spin duration at high speed.
+fan_low_threshold | number | 33 | Boundary for low tier.
+fan_med_threshold | number | 66 | Boundary for medium tier.
+fan_value_attr | enum | auto | Where to read speed: auto / percentage / speed / preset_mode.
+fan_glow_color | color/CSS var | var(--rb-fan-glow-color, #22c55e) | Glow color. Accepts hex/rgb/hsl or var(...).
+fan_glow_alpha | number (0–1) | 0.3	Glow opacity.
+fan_glow_full | bool | FALSE | true = full-card tint; false = bottom radial glow.
 
 ### Basic Usage:
 <img width="754" height="124" alt="image" src="https://github.com/user-attachments/assets/797ba56d-39ac-41a1-a9de-9d84f5ad3650" />
