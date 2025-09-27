@@ -103,6 +103,58 @@ The glow will render a multi-stop radial gradient when an effect name matches.
 ### Triggers for live updates
 <img width="760" height="115" alt="image" src="https://github.com/user-attachments/assets/bfd4a838-d6c9-4a0a-b68e-bf46bf7d505e" />
 
+### Install
+1. Ensure custom:button-card is installed and loaded.
+2. Add the template YAML to your button-card templates: section (see below).
+3. Use the card in Lovelace by referencing template: realistic_button_weather.
+
+## Weather Template - realistic_button_weather
+A weather-focused template that inherits all styling from realistic_botton and adds:
+* Auto MDI icon based on weather condition (with day/night awareness).
+* Animated rain: falling drops + larger puddle + visible ripple rings on impact.
+* Option to disable base glow so the card doesn’t get an orange tint when used for weather.
+  
+<img width="98" height="96" alt="image" src="https://github.com/user-attachments/assets/ecd5cd60-4711-4b68-83a8-3eb654ac1385" />
+
+### Usage
+With a weather. entity<br>
+<img width="759" height="291" alt="image" src="https://github.com/user-attachments/assets/48815667-80c3-40d4-aafa-7bcc034a8395" />
+
+With texxt/number sensors only<br>
+<img width="768" height="201" alt="image" src="https://github.com/user-attachments/assets/54e3525b-cb73-4376-a47c-9d3855af0eee" />
+
+Force rain (testing) & bigger puddle<br>
+<img width="755" height="130" alt="image" src="https://github.com/user-attachments/assets/5f11462e-a2e4-4144-8a86-4e1bfd485ed4" />
+
+### Variables (weather)
+
+Variable | Type | Default | Notes
+-- | -- | -- | --
+weather_icon | string | '' | Hard override (e.g., mdi:weather-hurricane). Skips auto-mapping when set.
+weather_condition_entity | string | '' | Entity providing condition text (e.g., weather.home or a sensor like sensor.outdoor_condition_text). Accepts values like rain, partlycloudy, clear.
+weather_precip_entity | string | '' | Numeric precipitation (rate/amount). If value > 0, icon prefers rainy/pouring. Add to triggers_update.
+weather_fallback_icon | string | 'mdi:weather-partly-cloudy' | Used when condition cannot be mapped.
+weather_use_daynight | boolean | TRUE | If true, uses sun.sun to switch to night icons after sunset (weather-night, etc.).
+weather_rain_enabled | boolean | FALSE | Forces rain effect on (useful for testing without a sensor).
+weather_rain_entity | string | '' | Rain detector. Numeric > 0 enables rain; strings like on, wet, raining, true, detected also enable. Add to triggers_update.
+weather_rain_color | string | '#4fc3f7' | Color for drops, ripples, and puddle. Hex, rgb/rgba, hsl/hsla, or a CSS var (e.g., var(--accent-color)).
+weather_puddle_height | number | 12 | Puddle height as % of card height. Recommended 8–20. Higher = bigger puddle.
+weather_rain_drops | number | 16 | Number of simultaneous drops/ripples (clamped 4–40). Higher = busier rain.
+weather_rain_speed | number | 1.2 | Base seconds per drop cycle. Each drop/ripple randomizes slightly around this. Lower = faster.
+weather_disable_base_glow | boolean | TRUE | Hides base realistic_button glow layers to avoid unwanted tint on weather cards.
+
+### Tips / Troubleshooting
+* No icon showing / icon text appears as the name:
+Ensure the icon block is under icon: (not name:), show_icon: true, and show_entity_picture: false.
+
+* Ripples not visible:
+You should see <span class="rb-ripple"> elements being created (they are separate from drops). Increase ring size in @keyframes rb-ring (e.g., final width 36px / height 16px) or replace color-mix(...) with a fixed rgba(79,195,247,.8).
+
+* Theme without color-mix:
+Replace color-mix(...) in CSS with a plain rgba(...) value (e.g., rgba(79,195,247,.25)).
+
+* Disable base glow from parent template:
+Set variables.weather_disable_base_glow: true (default) or override styles to hide custom_fields.glow / under_glow.
 
 ## Climate Template — realistic_button_climate
 Adds a big temperature and an HVAC-tinted background. Works with hvac_action or hvac_mode. Optionally read ambient from a separate sensor.<BR>
