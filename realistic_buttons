@@ -490,339 +490,215 @@ button_card_templates:
         }
         return entity?.attributes?.icon || 'mdi:lightbulb';
       ]]]
-  realistic_button_v2:
+  realistic_button_weather:
+    template: realistic_button
     variables:
-      accent: var(--accent-color)
-      subtitle: ''
-      badge: ''
-      show_state_dot: false
-      width: null
-      height: null
-      min_width: null
-      min_height: null
-      max_width: null
-      max_height: null
-      icon_size: 30px
-      icon_name: null
-      icon_on: null
-      icon_off: null
-    color_type: card
-    show_icon: true
-    show_name: true
-    show_label: true
-    aspect_ratio: 1/1
-    size: '[[[ return variables.icon_size || "30px"; ]]]'
-    tap_action:
-      action: toggle
-      haptic: light
-    hold_action:
-      action: more-info
-      haptic: medium
-    double_tap_action:
-      action: more-info
-    styles:
-      grid:
-        - grid-template-areas: '"i badge" "n n" "s s" "l l"'
-        - grid-template-columns: 1fr auto
-        - grid-template-rows: auto auto auto 1fr
-      card:
-        - position: relative
-        - padding: 10px
-        - border-radius: 22px
-        - border: 1px solid rgba(255,255,255,0.06)
-        - background: var(--ha-card-background, var(--card-background-color))
-        - box-shadow: |
-            [[[
-              const active = entity && ['on','open','playing'].includes(entity.state);
-              return active
-                ? '12px 12px 24px rgba(0,0,0,0.35), -12px -12px 24px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -8px 16px rgba(255,255,255,0.06)'
-                : '8px 8px 16px rgba(0,0,0,0.28), -8px -8px 16px rgba(255,255,255,0.06), inset 0 -6px 12px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.35)';
-            ]]]
-        - transition: box-shadow 0.25s ease, transform 0.08s ease
-        - width: '[[[ return variables.width      || "100px" ]]]'
-        - height: '[[[ return variables.height || "auto" ]]]'
-        - min-width: '[[[ return variables.min_width  || "" ]]]'
-        - min-height: '[[[ return variables.min_height  || "" ]]]'
-        - max-width: '[[[ return variables.max_width  || "" ]]]'
-        - max-height: '[[[ return variables.max_height || "" ]]]'
-      icon:
-        - grid-area: i
-        - position: relative
-        - z-index: 3
-        - display: block
-        - opacity: 1
-        - color: |
-            [[[
-              const active = entity && ['on','open','playing'].includes(entity.state);
-              if (!active) return 'var(--secondary-text-color)';
-
-              // pull color from the light (same logic as glow)
-              const a0 = entity?.attributes || {};
-              let attrs = a0;
-
-              // if it's a light group and has no own color, check its members
-              if (variables.icon_color_matches_light && variables.light_color_from_members) {
-                const members = a0?.entity_id;
-                if ((!a0.rgb_color && !a0.hs_color && a0.color_temp_kelvin == null) && Array.isArray(members)) {
-                  for (const m of members) {
-                    if (!m?.startsWith?.('light.')) continue;
-                    const st = states[m];
-                    const aa = st?.attributes || {};
-                    if (st?.state === 'on' && (aa.rgb_color || aa.hs_color || aa.color_temp_kelvin != null)) {
-                      attrs = aa; break;
-                    }
-                  }
-                }
-              }
-
-              // exact same color basis we use for the glow
-              if (Array.isArray(attrs.rgb_color)) {
-                const [r,g,b] = attrs.rgb_color; return `rgb(${r}, ${g}, ${b})`;
-              }
-              if (Array.isArray(attrs.hs_color)) {
-                const [h,s] = attrs.hs_color;
-                // brightness-informed lightness for visual parity with glow
-                let l = 55;
-                if (attrs.brightness != null) l = Math.max(35, Math.min(65, 30 + (attrs.brightness/255)*35));
-                return `hsl(${Math.round(h)}, ${Math.round(s)}%, ${Math.round(l)}%)`;
-              }
-              if (attrs.color_temp_kelvin != null) {
-                const k = Math.max(2000, Math.min(6500, attrs.color_temp_kelvin));
-                const t = (k - 2000) / (6500 - 2000);          // 0 = warm, 1 = cool
-                const hue = Math.round(25 + t * (210 - 25));   // warm→cool mapping
-                return `hsl(${hue}, 100%, 56%)`;
-              }
-
-              return variables.accent || 'var(--accent-color)'; // fallback
-            ]]]
-        - filter: |
-            [[[
-              return (entity && ['on','open','playing'].includes(entity.state))
-                ? 'drop-shadow(0 6px 10px rgba(0,0,0,0.35))'
-                : 'none';
-            ]]]
-      name:
-        - margin-top: 8px
-        - font-weight: 400
-        - justify-self: start
-        - color: var(--primary-text-color)
-        - z-index: 2
-      state:
-        - justify-self: start
-        - margin-top: 2px
-        - font-size: 0.82em
-        - opacity: 0.85
-        - color: var(--secondary-text-color)
-        - z-index: 2
-      label:
-        - justify-self: start
-        - margin-top: 2px
-        - opacity: 0.78
-        - font-size: 0.82em
-        - color: var(--secondary-text-color)
-        - z-index: 2
-      custom_fields:
-        gloss:
-          - position: absolute
-          - inset: 0
-          - border-radius: 22px
-          - background: >-
-              linear-gradient(180deg, rgba(255,255,255,0.28) 0%,
-              rgba(255,255,255,0.08) 45%, rgba(0,0,0,0.0) 46%)
-          - mix-blend-mode: screen
-          - pointer-events: none
-          - z-index: 0
-        under_glow:
-          - position: absolute
-          - inset: 0
-          - border-radius: 22px
-          - pointer-events: none
-          - background: |
-              [[[
-                // reuse the dynamic color logic (rgb/hs/ct → translucent)
-                const a = entity?.attributes || {};
-                let color = variables.accent;
-                if (Array.isArray(a.rgb_color)) {
-                  const [r,g,b] = a.rgb_color; color = `rgba(${r}, ${g}, ${b}, 0.18)`;
-                } else if (Array.isArray(a.hs_color)) {
-                  const [h,s] = a.hs_color;    color = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.18)`;
-                } else if (a.color_temp_kelvin != null) {
-                  const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
-                  const t = (k - 2000) / (6500 - 2000);
-                  const hue = Math.round(25 + t * (210 - 25));
-                  color = `hsla(${hue}, 100%, 56%, 0.18)`;
-                } else {
-                  color = `${variables.accent}33`;
-                }
-                // bottom-anchored soft glow
-                return `radial-gradient(120% 85% at 50% 88%, ${color}, transparent 80%)`;
-              ]]]
-          - opacity: |
-              [[[
-                return (entity && ['on','open','playing'].includes(entity.state)) ? 1 : 0;
-              ]]]
-          - transition: opacity 0.25s ease
-          - z-index: 0
-        glow:
-          - position: absolute
-          - top: 6px
-          - left: 6px
-          - right: 6px
-          - height: 56%
-          - border-radius: 9999px
-          - background: |
-              [[[
-                // same dynamic color, but translucent radial glow
-                const a = entity?.attributes || {};
-                let color = variables.accent;
-
-                if (Array.isArray(a.rgb_color)) {
-                  const [r,g,b] = a.rgb_color; color = `rgba(${r}, ${g}, ${b}, 0.30)`;
-                } else if (Array.isArray(a.hs_color)) {
-                  const [h,s] = a.hs_color; color = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.35)`;
-                } else if (a.color_temp_kelvin != null) {
-                  const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
-                  const t = (k - 2000) / (6500 - 2000);
-                  const hue = Math.round(25 + t * (210 - 25));
-                  color = `hsla(${hue}, 100%, 56%, 0.35)`;
-                } else {
-                  color = `${variables.accent}55`;
-                }
-                return `radial-gradient(circle at 30% 25%, ${color}, transparent 55%)`;
-              ]]]
-          - opacity: |
-              [[[
-                return (entity && ['on','open','playing'].includes(entity.state)) ? 1 : 0;
-              ]]]
-          - transition: opacity 0.25s ease
-          - pointer-events: none
-          - z-index: 0
-        badge:
-          - grid-area: badge
-          - align-self: start
-          - justify-self: end
-          - background: |
-              [[[
-                return variables.badge ? 'var(--accent-color)' : 'transparent';
-              ]]]
-          - color: var(--text-primary-color, white)
-          - border-radius: 999px
-          - min-width: 22px
-          - height: 22px
-          - line-height: 22px
-          - text-align: center
-          - font-size: 0.75em
-          - box-shadow: 0 2px 6px rgba(0,0,0,0.35)
-          - padding: 0 6px
-          - display: |
-              [[[
-                return variables.badge ? 'block' : 'none';
-              ]]]
-        indicator:
-          - position: absolute
-          - right: 10px
-          - bottom: 10px
-          - width: 4px
-          - height: 4px
-          - border-radius: 50%
-          - box-shadow: 0 0 0 2px var(--ha-card-background, var(--card-background-color))
-          - background: |
-              [[[
-                if (!variables.show_state_dot) return 'transparent';
-                if (entity && ['on','open','playing'].includes(entity.state)) return '#2ecc71';
-                return '#ff4d4d';
-              ]]]
+      weather_icon: ''
+      weather_condition_entity: ''
+      weather_precip_entity: ''
+      weather_fallback_icon: mdi:weather-partly-cloudy
+      weather_use_daynight: true
+      weather_rain_enabled: false
+      weather_rain_entity: ''
+      weather_rain_color: '#4fc3f7'
+      weather_puddle_height: 6
+      weather_rain_drops: 16
+      weather_rain_speed: 1.2
+      weather_disable_base_glow: true
     custom_fields:
-      gloss: ''
-      glow: ''
-      under_glow: ''
-      badge: |
+      rain: |
         [[[
-          return variables.badge ? `<span>${variables.badge}</span>` : '';
+          function active(){
+            if (variables.weather_rain_enabled) return true;
+            const id = (variables.weather_rain_entity||'').trim();
+            if (!id) return false;
+            const s = states[id]?.state; if (s==null) return false;
+            const v = String(s).toLowerCase(); const n = parseFloat(v);
+            if (!Number.isNaN(n)) return n > 0;
+            return ['on','wet','raining','rain','true','detected'].includes(v);
+          }
+          if (!active()) return '';
+          
+          const N   = Math.max(4, Math.min(40, Number(variables.weather_rain_drops ?? 16)));
+          const H   = Math.max(4, Math.min(25, Number(variables.weather_puddle_height ?? 12)));
+          const SPD = Math.max(0.6, Number(variables.weather_rain_speed ?? 1.1));
+
+          const parts = [];
+          parts.push(`<div class="rb-puddle" style="--puddle-h:${H}%"></div>`);
+          for (let i=0;i<N;i++){
+            const x = Math.round(Math.random()*96 + 2);
+            const d = (SPD*(0.6+Math.random()*0.9)).toFixed(2);
+            const delay = (i*(SPD/N)).toFixed(2);
+            parts.push(`<span class="rb-drop"   style="--x:${x}%;--dur:${d}s;--delay:${delay}s;"></span>`);
+            parts.push(`<span class="rb-ripple" style="--x:${x}%;--dur:${d}s;--delay:${delay}s;"></span>`);
+          }
+          return `<div class="rb-rain">${parts.join('')}</div>`;
         ]]]
-      indicator: |
-        [[[
-          return variables.show_state_dot ? ' ' : '';
-        ]]]
-    state:
-      - value: 'on'
-        styles:
-          card:
-            - background: |
-                [[[
-                  // Subtle color-tinted backdrop when on
-                  const a = entity?.attributes || {};
-                  let tint = variables.accent;
-
-                  if (Array.isArray(a.rgb_color)) {
-                    const [r,g,b] = a.rgb_color; tint = `rgba(${r}, ${g}, ${b}, 0.12)`;
-                  } else if (Array.isArray(a.hs_color)) {
-                    const [h,s] = a.hs_color; tint = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.12)`;
-                  } else if (a.color_temp_kelvin != null) {
-                    const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
-                    const t = (k - 2000) / (6500 - 2000);
-                    const hue = Math.round(25 + t * (210 - 25));
-                    tint = `hsla(${hue}, 100%, 56%, 0.12)`;
-                  } else {
-                    tint = `${variables.accent}1F`;
-                  }
-
-                  return `linear-gradient(145deg, ${tint}, var(--ha-card-background, var(--card-background-color)))`;
-                ]]]
-            - border: |
-                [[[
-                  // Slight colored border when on
-                  const a = entity?.attributes || {};
-                  let stroke = variables.accent;
-
-                  if (Array.isArray(a.rgb_color)) {
-                    const [r,g,b] = a.rgb_color; stroke = `rgba(${r}, ${g}, ${b}, 0.45)`;
-                  } else if (Array.isArray(a.hs_color)) {
-                    const [h,s] = a.hs_color; stroke = `hsla(${Math.round(h)}, ${Math.round(s)}%, 55%, 0.45)`;
-                  } else if (a.color_temp_kelvin != null) {
-                    const k = Math.max(2000, Math.min(6500, a.color_temp_kelvin));
-                    const t = (k - 2000) / (6500 - 2000);
-                    const hue = Math.round(25 + t * (210 - 25));
-                    stroke = `hsla(${hue}, 100%, 56%, 0.45)`;
-                  } else {
-                    stroke = `${variables.accent}66`;
-                  }
-
-                  return `1px solid ${stroke}`;
-                ]]]
-      - value: open
-        styles:
-          card:
-            - background: >-
-                linear-gradient(145deg, var(--accent-color)1A,
-                var(--ha-card-background, var(--card-background-color)))
-      - value: playing
-        styles:
-          icon:
-            - color: '[[[ return variables.accent ]]]'
     icon: |
       [[[
-        if (variables.icon_name) return variables.icon_name;
-        if (variables.icon_on || variables.icon_off) {
-          const s = entity?.state;
-          const active = ['on','open','playing','heating','cooling'].includes(s);
-          if (active && variables.icon_on) return variables.icon_on;
-          const inactive = ['off','closed','idle','standby','unavailable'].includes(s);
-          if (inactive && variables.icon_off) return variables.icon_off;
+        // 0) explicit override
+        if (variables.weather_icon) return variables.weather_icon;
+
+        const condId =
+          variables.weather_condition_entity ||
+          (entity?.entity_id?.startsWith('weather.') ? entity.entity_id : '');
+
+        // read condition text (if available)
+        const condRaw = condId ? String(states[condId]?.state ?? '').toLowerCase() : '';
+        const cond = condRaw.replace('_', '-').replace(/\s+/g, '-'); // normalize
+
+        // optional precip sensor → rain/pouring if > 0
+        const prId = String(variables.weather_precip_entity || '');
+        const pr = prId ? Number(states[prId]?.state) : NaN;
+
+        // day / night
+        const isNight = !!variables.weather_use_daynight &&
+                        (states['sun.sun']?.state === 'below_horizon');
+                        
+        // maps for HA/MDI conditions
+        const dayMap = {
+          'sunny': 'mdi:weather-sunny',
+          'clear': 'mdi:weather-sunny',
+          'partlycloudy': 'mdi:weather-partly-cloudy',
+          'partly-cloudy': 'mdi:weather-partly-cloudy',
+          'mostlycloudy': 'mdi:weather-partly-cloudy',
+          'cloudy': 'mdi:weather-cloudy',
+          'overcast': 'mdi:weather-cloudy',
+          'fog': 'mdi:weather-fog',
+          'mist': 'mdi:weather-fog',
+          'haze': 'mdi:weather-hazy',
+          'hazy': 'mdi:weather-hazy',
+          'wind': 'mdi:weather-windy',
+          'windy': 'mdi:weather-windy',
+          'breezy': 'mdi:weather-windy',
+          'rain': 'mdi:weather-rainy',
+          'rainy': 'mdi:weather-rainy',
+          'pouring': 'mdi:weather-pouring',
+          'showers': 'mdi:weather-rainy',
+          'drizzle': 'mdi:weather-rainy',
+          'lightning': 'mdi:weather-lightning',
+          'thunderstorm': 'mdi:weather-lightning',
+          'lightning-rainy': 'mdi:weather-lightning-rainy',
+          'storm': 'mdi:weather-lightning',
+          'snow': 'mdi:weather-snowy',
+          'snowy': 'mdi:weather-snowy',
+          'snowy-rainy': 'mdi:weather-snowy-rainy',
+          'sleet': 'mdi:weather-snowy-rainy',
+          'hail': 'mdi:weather-hail',
+          'tornado': 'mdi:weather-tornado',
+          'hurricane': 'mdi:weather-hurricane',
+          'exceptional': 'mdi:alert-circle-outline'
+        };
+        const nightMap = {
+          ...dayMap,
+          'sunny': 'mdi:weather-night',       // override sun to moon at night
+          'clear': 'mdi:weather-night',
+          'clear-night': 'mdi:weather-night',
+          'partlycloudy': 'mdi:weather-night-partly-cloudy',
+          'partly-cloudy': 'mdi:weather-night-partly-cloudy'
+        };
+        const map = isNight ? nightMap : dayMap;
+
+        // If we have a numeric precip > 0 and no explicit thunder terms, choose rain/pouring
+        if (!cond && !Number.isNaN(pr) && pr > 0) {
+          return pr > 8 ? 'mdi:weather-pouring' : 'mdi:weather-rainy'; // adjust threshold to your units
         }
-        return entity?.attributes?.icon || 'mdi:lightbulb';
-      ]]]
-    label: |
-      [[[
-        if (variables.subtitle) return variables.subtitle;
-        if (!entity) return '';
-        const a = entity.attributes || {};
-        if (a.brightness != null && ['on','open','playing'].includes(entity.state)) {
-          return `${Math.round(a.brightness / 2.54)}%`;
+
+        // direct map hit?
+        if (map[cond]) return map[cond];
+
+        // heuristic synonyms
+        if (cond.includes('clear') && isNight) return 'mdi:weather-night';
+        if (cond.includes('clear')) return 'mdi:weather-sunny';
+        if (/(partly.?cloud|mostly.?cloud)/.test(cond)) {
+          return isNight ? 'mdi:weather-night-partly-cloudy' : 'mdi:weather-partly-cloudy';
         }
-        const s = (entity.state || '').toString();
-        return s.charAt(0).toUpperCase() + s.slice(1);
+        if (/(shower|drizzle)/.test(cond)) return 'mdi:weather-rainy';
+        if (/(lightning|thunder|storm)/.test(cond)) {
+          return (!Number.isNaN(pr) && pr > 0) ? 'mdi:weather-lightning-rainy' : 'mdi:weather-lightning';
+        }
+        if (/(snow|sleet)/.test(cond)) return 'mdi:weather-snowy';
+        if (/hail/.test(cond)) return 'mdi:weather-hail';
+        if (/(fog|mist|haze|smoke)/.test(cond)) return 'mdi:weather-fog';
+        if (/(wind|breez)/.test(cond)) return 'mdi:weather-windy';
+        if (/overcast|cloud/.test(cond)) return 'mdi:weather-cloudy';
+
+        // fallback
+        return variables.weather_fallback_icon || 'mdi:weather-partly-cloudy';
       ]]]
+    styles:
+      card:
+        - '--rb-rain-color': |
+            [[[
+              return variables.weather_rain_color || '#4fc3f7';
+            ]]]
+      custom_fields:
+        rain:
+          - position: absolute
+          - inset: 0
+          - border-radius: inherit
+          - pointer-events: none
+          - overflow: hidden
+          - z-index: 0
+        glow:
+          - opacity: '[[[ return variables.weather_disable_base_glow ? 0 : null ]]]'
+          - display: '[[[ return variables.weather_disable_base_glow ? "none" : null ]]]'
+        under_glow:
+          - opacity: '[[[ return variables.weather_disable_base_glow ? 0 : null ]]]'
+          - display: '[[[ return variables.weather_disable_base_glow ? "none" : null ]]]'
+    extra_styles: |
+      .rb-rain {
+        position:absolute; inset:0; border-radius:inherit; pointer-events:none; overflow:hidden;
+      }
+      /* Bigger default puddle */
+      .rb-puddle {
+        position:absolute; left:0; right:0; bottom:0;
+        height: var(--puddle-h, 12%);                /* ← larger */
+        background:
+          radial-gradient(60% 140% at 50% 130%,
+            color-mix(in srgb, var(--rb-rain-color,#4fc3f7) 60%, transparent) 0%,
+            transparent 75%),
+          linear-gradient(to top,
+            color-mix(in srgb, var(--rb-rain-color,#4fc3f7) 35%, transparent) 0%,
+            transparent 100%);
+        filter: blur(.6px);
+        z-index:0;
+      }
+      .rb-drop {
+        position:absolute; left:var(--x); top:-12%;
+        width:2px; --drop-h:12%; height:var(--drop-h);
+        border-radius:2px; background:var(--rb-rain-color,#4fc3f7); opacity:.9;
+        animation: rb-fall-top var(--dur,1.1s) linear var(--delay,0s) infinite;
+        z-index:2;
+      }
+      /* NEW: ring-style ripple so it always shows even on dark themes */
+      .rb-ripple {
+        position:absolute;
+        top: calc(100% - var(--puddle-h,12%));       /* sit exactly at the puddle top */
+        left: var(--x);
+        transform: translate(-50%, 0);
+        width: 0; height: 0;
+        border: 2px solid color-mix(in srgb, var(--rb-rain-color,#4fc3f7) 70%, transparent);
+        border-radius: 999px;
+        opacity: 0;
+        /* subtle glow so the ring pops */
+        filter: drop-shadow(0 0 2px color-mix(in srgb, var(--rb-rain-color,#4fc3f7) 60%, transparent));
+        animation: rb-ring var(--dur,1.1s) ease-out var(--delay,0s) infinite;
+        z-index: 3;                                   /* above drops so you can’t miss it */
+        mix-blend-mode: screen;
+      }
+
+      @keyframes rb-fall-top {
+        0%   { top:-12%; opacity:.5; }
+        85%  { opacity:.95; }
+        100% { top: calc(100% - var(--puddle-h,12%) - var(--drop-h,12%)); }
+      }
+      /* Expand from a small ellipse to a wider one, fading out */
+      @keyframes rb-ring {
+        0%   { opacity:.35; width:8px;  height:4px;  }
+        70%  { opacity:.20; }
+        100% { opacity:0;   width:28px; height:12px; }
+      }
   realistic_button_climate:
     template: realistic_button
     variables:
